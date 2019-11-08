@@ -1,8 +1,8 @@
+
 function [outputArg1,outputArg2] = DBSCAN_Double(img,pathsave_Detected,k)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+
 im = im2double (img); 
-idm = im < 0.12; 
+idm = im < 0.12; %% Theta value of the image- Can also be adjusted w.r.t. the Brightness/Contrast of the images.
 im(idm) = NaN; 
 indices = find(isnan(im) == 1);
 [I,J] = ind2sub(size(im),indices);
@@ -21,6 +21,7 @@ for i = 1:length (vis)
     BW(vis(i,1),vis(i,2))=1;
 end    
 BW_log = logical(BW);
+
 % Centroids
 stats = regionprops(BW_log,'centroid');
 centroids = cat(1,stats.Centroid);
@@ -39,21 +40,19 @@ BW_2_new = zeros (size(im));
 for j = 1:length (viss)
     BW_2_new(viss(j,1),viss(j,2))=1;
 end
+
 % Centroids 
 BW_2_log = logical(BW_2_new);
 statss = regionprops(BW_2_log,'centroid');
 centroidss = cat(1,statss.Centroid);
 
 %% Bounding Boxes
-xlen = 250 ; ylen =  250;
+xlen = 250 ; ylen = 250; 
 
 for f= 1: length (centroidss)
     clearvars xmin ymin F
     xmin = centroidss(f,1) - 125 ; ymin = centroidss(f,2) - 125;
     F = imcrop(img, [xmin ymin xlen ylen]);
-    %K=k; F=f; 
-    %'KF%d%d.pnd', 
-    %text1 = (k+'_%d.png');
     baseFileName = sprintf('%d%d.png',k,f);
     fullFileName = fullfile(pathsave_Detected, baseFileName);
     imwrite(F, fullFileName);
